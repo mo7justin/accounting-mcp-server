@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  accounting-mcp:
+    build: .
+    container_name: accounting-mcp-server
+    ports:
+      - "8000:8000"
+    environment:
+      - STUDIO_HOST=0.0.0.0
+      - STUDIO_PORT=8000
+      - STUDIO_PROTOCOL=http
+      - ENABLE_STUDIO=true
+      - DATA_DIR=/app/data
+      - DOCKER_ENV=true
+    volumes:
+      - accounting-mcp-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  accounting-mcp-data:
+    name: accounting-mcp-data
+    driver: local
